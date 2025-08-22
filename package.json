@@ -1,0 +1,27 @@
+{
+  "name": "nsd-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm tsx watch src/index.ts --clear-screen=false",
+    "build": "pnpm tsc",
+    "start": "node ./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
+  "dependencies": {
+    "@libsql/client": "^0.15.11",
+    "dotenv": "^17.2.1",
+    "telegraf": "^4.16.3",
+    "valibot": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,29 @@
+import { bot } from "../../bot.js";
+import { getUser, userAcceptPolicy } from "../../user/repository.js";
+import { getUserState } from "../../user/service.js";
+import { mainScene } from "./../main/scene.js";
+
+bot.action(/policy:(.+):accept/, async (ctx) => {
+  ctx.answerCbQuery();
+  const messageId = ctx.match[1] as string;
+
+  const state = await getUserState(ctx);
+  const message = state.messages.find((m) => m.token === messageId);
+  if (!message) {
+    throw new Error("policy:accept: failed to get message from user state");
+  }
+
+	const user = await getUser(ctx.from.id)
+	if (!user) throw new Error("policy:accept: no user when accepting policy")
+
+	await userAcceptPolicy(ctx.from.id);
+
+  ctx.telegram.editMessageText(
+    state.chatId,
+    message.messageId,
+    undefined,
+    "accepted",
+  );
+
+  ctx.scene.enter(mainScene.id, { sendMessage: true });
+});
