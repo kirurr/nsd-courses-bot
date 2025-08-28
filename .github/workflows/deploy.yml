@@ -20,6 +20,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             source ~/.bashrc
+            export PATH=/root/.nvm/versions/node/v22.18.0/bin:$PATH
             cd ~/nsd-courses-bot/
             git pull
             /root/.nvm/versions/node/v22.18.0/bin/pnpm install 
