@@ -8,6 +8,7 @@ import { getUser } from "./user/repository.js";
 import "./scenes/policy/actions.js";
 import "./scenes/main/actions.js";
 import "./scenes/course/actions.js";
+import "./scenes/buy/actions.js";
 
 bot.start(async (ctx) => {
   const user = await getUser(ctx.from.id);
@@ -26,7 +27,12 @@ bot.launch();
 bot.catch((err, ctx) => {
   console.error("global error happened");
   console.error(err);
-  ctx.reply("error happened, try again later");
+  if (ctx.callbackQuery) {
+    ctx
+      .answerCbQuery("Произошла ошибка 😢", { show_alert: true })
+      .catch(() => {});
+  }
+  ctx.reply("Произошла ошибка, попробуйте позже", { parse_mode: 'MarkdownV2' });
 });
 
 process.once("SIGINT", () => bot.stop("SIGINT"));

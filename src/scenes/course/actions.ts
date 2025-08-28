@@ -1,46 +1,29 @@
 import { bot } from "../../bot.js";
 import { getCourseById } from "../../course/service.js";
-import { createPayment, toggleInvite } from "../../payment/repository.js";
-import { getUser } from "../../user/repository.js";
+import { toggleInvite } from "../../payment/repository.js";
 import { mainScene } from "../main/scene.js";
+import { getPayments } from "../../payment/service.js";
+import { buyScene } from "../buy/scene.js";
 
 bot.action(/course:(.+):(.+):back/, (ctx) => {
-  ctx.answerCbQuery();
+  ctx.answerCbQuery(undefined, { cache_time: 1 });
   const token = ctx.match[1] as string;
-  const courseId = ctx.match[2] as string;
+  // const courseId = ctx.match[2] as string;
 
   ctx.scene.enter(mainScene.id, { token });
 });
 
 bot.action(/course:(.+):(.+):buy/, async (ctx) => {
-  ctx.answerCbQuery();
-  // const token = ctx.match[1] as string;
+  ctx.answerCbQuery(undefined, { cache_time: 1 });
+
+  const token = ctx.match[1] as string;
   const courseId = ctx.match[2] as string;
 
-  const course = await getCourseById(ctx, parseInt(courseId));
-
-  let user = ctx.session.user!;
-  if (!user) {
-    const res = await getUser(ctx.from!.id);
-    if (!res) {
-      ctx.reply("error happened, try again later");
-      return;
-    }
-    user = res;
-  }
-
-  const newPayment = await createPayment({
-    userId: user.telegramId,
-    courseId: course.id,
-  });
-
-  ctx.session.payments = [...(ctx.session.payments ?? []), newPayment];
-
-  ctx.scene.reenter();
+  ctx.scene.enter(buyScene.id, { token, courseId });
 });
 
 bot.action(/course:(.+):(.+):invite/, async (ctx) => {
-  ctx.answerCbQuery();
+  ctx.answerCbQuery(undefined, { cache_time: 1 });
   if (!ctx.from) {
     throw new Error("wrong tipe of context passed");
   }
@@ -50,20 +33,37 @@ bot.action(/course:(.+):(.+):invite/, async (ctx) => {
 
   const course = await getCourseById(ctx, parseInt(courseId));
 
-  const payment = ctx.session.payments!.find(
+  const payments = await getPayments(ctx);
+
+  const coursePayment = payments.find(
     (payment) => payment.courseId === course.id,
   );
 
-  if (!payment) {
-    ctx.reply("error happened, try again later");
+  if (!coursePayment) {
+    const sent = await ctx.reply(
+      "Возможно, вам еще не выдали доступ, обратитесь в подддержку",
+    );
+    setTimeout(() => ctx.deleteMessage(sent.message_id), 10000);
+    return;
   }
 
-  await toggleInvite(payment!.id);
+  if (coursePayment?.isInvited) {
+    ctx.reply(
+      "Невозможно создать ссылку-приглашение повторно, напишите в поддержку",
+      { parse_mode: "MarkdownV2" },
+    );
+    return;
+  }
+
+  await toggleInvite(coursePayment!.id);
 
   const invite = await ctx.telegram.createChatInviteLink(course.groupId, {
-    name: "One time invite",
+    name: "Одноразовое приглашение",
     member_limit: 1,
   });
 
-  ctx.reply(`invite link: ${invite.invite_link}`);
+  ctx.scene.reenter();
+  ctx.reply(`[Нажмите для вступления в группу](${invite.invite_link}`, {
+    parse_mode: "MarkdownV2",
+  });
 });

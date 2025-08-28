@@ -1,8 +1,8 @@
 import { Scenes } from "telegraf";
 import type { ContextWithData } from "./../scenes.js";
-import { getPaymentsForUserByTelegramId } from "../../payment/repository.js";
 import type { InlineKeyboardButton } from "telegraf/types";
 import { getCourseById } from "../../course/service.js";
+import { safeCtxEditMessage } from "../../helpers.js";
 
 export const courseScene = new Scenes.BaseScene<ContextWithData>("course");
 
@@ -21,36 +21,31 @@ courseScene.enter(async (ctx) => {
   const inlineKeyboard: InlineKeyboardButton[][] = [
     [
       {
-        text: "back",
+        text: "Главное меню",
         callback_data: `course:${token}:${courseId}:back`,
       },
     ],
+    [
+			{
+				text: "Приобрести",
+				callback_data: `course:${token}:${courseId}:buy`,
+			},
+		],
+    [
+      {
+        text: "Уже приобрел",
+        callback_data: `course:${token}:${courseId}:invite`,
+      },
+    ],
+    [
+			{
+				text: "Поддержка",
+				url: "https://supporturl.com",
+			},
+		],
   ];
 
-
-  const userPayments = await getPaymentsForUserByTelegramId(ctx.from.id);
-  ctx.session.payments = userPayments;
-
-  const coursePayment = userPayments.find(
-    (payment) => payment.courseId === course.id,
-  );
-
-  if (!coursePayment) {
-    inlineKeyboard.push([{ text: "buy", callback_data: `course:${token}:${courseId}:buy`}]);
-  } else if (!coursePayment?.isInvited) {
-    inlineKeyboard.push([{ text: "invite", callback_data: `course:${token}:${courseId}:invite`}]);
-  } else {
-    inlineKeyboard.push([
-      {
-        text: "you are already invited, contact support to get link again",
-        callback_data: `course:${token}:${courseId}:inviteAgain`,
-      },
-    ]);
-  }
-
-  await ctx.editMessageText(course.description, {
-    reply_markup: {
-      inline_keyboard: inlineKeyboard,
-    },
+  await safeCtxEditMessage(ctx, course.description.replace(/\\n/g, "\n"), {
+    inline_keyboard: inlineKeyboard,
   });
 });

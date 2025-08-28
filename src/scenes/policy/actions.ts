@@ -4,7 +4,7 @@ import { getUserState } from "../../user/service.js";
 import { mainScene } from "./../main/scene.js";
 
 bot.action(/policy:(.+):accept/, async (ctx) => {
-  ctx.answerCbQuery();
+  ctx.answerCbQuery(undefined, { cache_time: 1 });
   const messageId = ctx.match[1] as string;
 
   const state = await getUserState(ctx);
@@ -18,12 +18,8 @@ bot.action(/policy:(.+):accept/, async (ctx) => {
 
 	await userAcceptPolicy(ctx.from.id);
 
-  ctx.telegram.editMessageText(
-    state.chatId,
-    message.messageId,
-    undefined,
-    "accepted",
-  );
+	// await safeTelegramEditMessage(ctx, state.chatId, message.messageId, "accepted")
+	await ctx.editMessageReplyMarkup(undefined)
 
   ctx.scene.enter(mainScene.id, { sendMessage: true });
 });
