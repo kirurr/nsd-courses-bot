@@ -16,12 +16,14 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
+          username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
+            source ~/.bashrc
+            export PATH=/root/.nvm/versions/node/v22.18.0/bin:$PATH
             cd ~/nsd-courses-bot/
             git pull
-            pnpm install 
-            pnpm build
-            pm2 restart nsd-courses-bot
+            /root/.nvm/versions/node/v22.18.0/bin/pnpm install 
+            /root/.nvm/versions/node/v22.18.0/bin/pnpm build
+            /root/.nvm/versions/node/v22.18.0/bin/pm2 restart nsd-courses-bot
 
