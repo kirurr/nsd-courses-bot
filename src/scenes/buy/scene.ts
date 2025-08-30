@@ -1,6 +1,7 @@
 import { Scenes } from "telegraf";
 import type { ContextWithData } from "../scenes.js";
 import { safeCtxEditMessage } from "../../helpers.js";
+import { getCourseById } from "../../course/service.js";
 
 export const buyScene = new Scenes.BaseScene<ContextWithData>("buy");
 
@@ -14,9 +15,11 @@ buyScene.enter(async (ctx) => {
     courseId: string;
   };
 
+  const course = await getCourseById(ctx, parseInt(courseId));
+
   await safeCtxEditMessage(
     ctx,
-    `Для приобретения курса необходимо внести оплату по этой [ссылке](https://link.com) и сообщить в поддержку`,
+    `Для приобретения курса необходимо внести оплату по этой [ссылке](${course.paymentLink}) и сообщить в поддержку`,
     {
       inline_keyboard: [
         [

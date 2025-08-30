@@ -25,5 +25,5 @@ jobs:
             git pull
             /root/.nvm/versions/node/v22.18.0/bin/pnpm install 
             /root/.nvm/versions/node/v22.18.0/bin/pnpm build
-            /root/.nvm/versions/node/v22.18.0/bin/pm2 restart nsd-courses-bot
+            /root/.nvm/versions/node/v22.18.0/bin/pm2 restart bot
 

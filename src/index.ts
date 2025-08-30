@@ -1,4 +1,5 @@
 import "dotenv/config";
+
 import { bot } from "./bot.js";
 
 import { policyScene } from "./scenes/policy/scene.js";
@@ -23,6 +24,7 @@ bot.start(async (ctx) => {
 });
 
 bot.launch();
+console.log("launched bot");
 
 bot.catch((err, ctx) => {
   console.error("global error happened");
@@ -32,7 +34,7 @@ bot.catch((err, ctx) => {
       .answerCbQuery("Произошла ошибка 😢", { show_alert: true })
       .catch(() => {});
   }
-  ctx.reply("Произошла ошибка, попробуйте позже", { parse_mode: 'MarkdownV2' });
+  ctx.reply("Произошла ошибка, попробуйте позже", { parse_mode: "MarkdownV2" });
 });
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
