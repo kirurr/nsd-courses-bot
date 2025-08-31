@@ -19,3 +19,7 @@ bot.use(
 );
 
 bot.use(stage.middleware());
+
+bot.telegram.setMyCommands([
+  { command: "start", description: "Запустить бота" },
+]);
