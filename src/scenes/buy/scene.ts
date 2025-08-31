@@ -28,7 +28,7 @@ buyScene.enter(async (ctx) => {
             callback_data: `buy:${token}:${courseId}:back`,
           },
         ],
-        [{ text: "Поддержка", url: "https://supporturl.com" }],
+        [{ text: "Поддержка", url: course.supportLink}],
       ],
     },
   );

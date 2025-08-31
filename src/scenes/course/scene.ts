@@ -40,7 +40,7 @@ courseScene.enter(async (ctx) => {
     [
 			{
 				text: "Поддержка",
-				url: "https://supporturl.com",
+				url: course.supportLink,
 			},
 		],
   ];

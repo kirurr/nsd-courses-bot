@@ -8,4 +8,5 @@ export const CourseSchema = v.object({
   description: v.string(),
   groupId: v.string(),
   paymentLink: v.string(),
+	supportLink: v.string(),
 });
