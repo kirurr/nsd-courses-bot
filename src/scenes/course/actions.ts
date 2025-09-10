@@ -50,20 +50,19 @@ bot.action(/course:(.+):(.+):invite/, async (ctx) => {
   if (coursePayment?.isInvited) {
     ctx.reply(
       "Невозможно создать ссылку-приглашение повторно, напишите в поддержку",
-      { parse_mode: "MarkdownV2" },
     );
     return;
   }
-
-  await toggleInvite(coursePayment!.id);
 
   const invite = await ctx.telegram.createChatInviteLink(course.groupId, {
     name: "Одноразовое приглашение",
     member_limit: 1,
   });
 
+  await toggleInvite(coursePayment!.id);
+
   ctx.scene.reenter();
-  ctx.reply(`[Нажмите для вступления в группу](${invite.invite_link}`, {
+  ctx.reply(`[Нажмите для вступления в группу](${invite.invite_link})`, {
     parse_mode: "MarkdownV2",
   });
 });
