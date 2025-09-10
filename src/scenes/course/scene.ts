@@ -60,11 +60,7 @@ ${course.description.replace(/\\n/g, "\n")}
 *Стоимость:* ${course.price} рублей
 `;
 
-	try {
-		await safeCtxEditMessage(ctx, courseMessage, {
-			inline_keyboard: inlineKeyboard,
-		});
-	} catch (e) {
-		console.log(e)
-	}
+	await safeCtxEditMessage(ctx, courseMessage, {
+		inline_keyboard: inlineKeyboard,
+	});
 });

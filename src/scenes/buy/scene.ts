@@ -17,7 +17,7 @@ buyScene.enter(async (ctx) => {
 
   const course = await getCourseById(ctx, parseInt(courseId));
 
-	let buyMessage = `
+  let buyMessage = `
 *${course.title}*
 
 Для приобретения необходимо внести оплату по ссылке и сообщить в поддержку
@@ -27,21 +27,21 @@ buyScene.enter(async (ctx) => {
 [Ссылка на оплату](${course.paymentLink})
 `;
 
-if (course.supportLink == 'https://t.me/Natalitammore') {
-		buyMessage = `
+  if (course.supportLink == "https://t.me/Natalitammore") {
+    buyMessage = `
 *${course.title}*
 
 Для приобретения необходимо внести оплату по реквизитам и отправить чек в поддержку
 
-${course.paymentLink}
+${course.paymentLink.replace(/\\n/g, "\n")}
 
 *Стоимость:* ${course.price} рублей
-`
-	}
+`;
+  }
 
   await safeCtxEditMessage(
     ctx,
-		buyMessage,
+    buyMessage,
     {
       inline_keyboard: [
         [
