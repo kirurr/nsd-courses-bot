@@ -24,7 +24,9 @@ export async function getCourseById(id: number): Promise<Course | null> {
       description: course.description,
       groupId: course.group_id,
       paymentLink: course.payment_link,
-			supportLink: course.support_link
+      supportLink: course.support_link,
+      price: course.price,
+      recieveType: course.recieve_type,
     });
 
     if (output.success) {
@@ -53,7 +55,9 @@ export async function getCourses(): Promise<Course[]> {
           description: course.description,
           groupId: course.group_id,
           paymentLink: course.payment_link,
-					supportLink: course.support_link
+          supportLink: course.support_link,
+          price: course.price,
+          recieveType: course.recieve_type,
         };
       }),
     );

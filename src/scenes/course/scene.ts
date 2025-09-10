@@ -26,26 +26,45 @@ courseScene.enter(async (ctx) => {
       },
     ],
     [
-			{
-				text: "Приобрести",
-				callback_data: `course:${token}:${courseId}:buy`,
-			},
-		],
-    [
       {
-        text: "Уже приобрел",
-        callback_data: `course:${token}:${courseId}:invite`,
+        text: "Приобрести",
+        callback_data: `course:${token}:${courseId}:buy`,
       },
     ],
+    course.recieveType == "chat"
+      ? [
+          {
+            text: "Уже приобрел",
+            callback_data: `course:${token}:${courseId}:invite`,
+          },
+        ]
+      : [
+          {
+            text: "Уже приобрел",
+            url: course.supportLink,
+          },
+        ],
     [
-			{
-				text: "Поддержка",
-				url: course.supportLink,
-			},
-		],
+      {
+        text: "Поддержка",
+        url: course.supportLink,
+      },
+    ],
   ];
 
-  await safeCtxEditMessage(ctx, course.description.replace(/\\n/g, "\n"), {
-    inline_keyboard: inlineKeyboard,
-  });
+  const courseMessage = `
+*${course.title}*
+
+${course.description.replace(/\\n/g, "\n")}
+
+*Стоимость:* ${course.price} рублей
+`;
+
+	try {
+		await safeCtxEditMessage(ctx, courseMessage, {
+			inline_keyboard: inlineKeyboard,
+		});
+	} catch (e) {
+		console.log(e)
+	}
 });

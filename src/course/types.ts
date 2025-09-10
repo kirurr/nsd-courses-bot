@@ -9,4 +9,6 @@ export const CourseSchema = v.object({
   groupId: v.string(),
   paymentLink: v.string(),
 	supportLink: v.string(),
+	price: v.number(),
+	recieveType: v.picklist(['chat', 'direct'])
 });
